@@ -1,2 +1,2 @@
 # html_e_css
-Códigos desenvolvidos durante a leitura do livro Use a Cabeça - HTML e CSS
+Códigos desenvolvidos durante o aprendizado de HTML e CSS
