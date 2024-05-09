@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer</title>
+    <style>
+        #timer {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            font-size: 16px;
+            padding: 5px 10px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="timer">00:00:00</div>
+    <button id="startButton">Iniciar</button>
+    <button id="pauseButton">Pausar</button>
+    
+    <script>
+        let timerInterval;
+        let totalSeconds = 10000 * 3600; // 10000 horas em segundos
+        let paused = false;
+
+        const timerDisplay = document.getElementById('timer');
+        const startButton = document.getElementById('startButton');
+        const pauseButton = document.getElementById('pauseButton');
+
+        startButton.addEventListener('click', startTimer);
+        pauseButton.addEventListener('click', pauseTimer);
+
+        function startTimer() {
+            timerInterval = setInterval(updateTimer, 1000);
+            startButton.disabled = true;
+            pauseButton.disabled = false;
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            paused = true;
+            startButton.disabled = false;
+            pauseButton.disabled = true;
+        }
+
+        function updateTimer() {
+            if (!paused) {
+                totalSeconds--;
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = "Timer encerrado!";
+                    return;
+                }
+                timerDisplay.textContent = formatTime(totalSeconds);
+            }
+        }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Armazenar dados em local storage quando a página for fechada
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('totalSeconds', totalSeconds);
+            localStorage.setItem('paused', paused);
+        });
+
+        // Carregar dados do local storage ao carregar a página novamente
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('totalSeconds') && localStorage.getItem('paused')) {
+                totalSeconds = parseInt(localStorage.getItem('totalSeconds'));
+                paused = localStorage.getItem('paused') === 'true';
+                if (!paused) {
+                    startTimer();
+                } else {
+                    timerDisplay.textContent = formatTime(totalSeconds);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
